@@ -166,7 +166,7 @@ def gmail_send_message(create_message):
         print(F'An error occurred: {error}')
         send_message = None
     return send_message
-
+ 
 
 def main(): 
     authorize()
