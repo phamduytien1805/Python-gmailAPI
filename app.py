@@ -12,12 +12,15 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+from registry import Registry as reg
+import shutdown_logout as sl
 app = Flask(__name__)
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
-remoteGmail = 'phamduytien1805@gmail.com'
+remoteGmail = 'khanhfo32001@gmail.com'
 #credentials of app
 creds = None
 def beginWatchMailBox():
@@ -58,7 +61,39 @@ def authorize():
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
-            
+
+def getSubject_Sender(headers):
+    try:
+        subject = ""
+        sender = ""
+        for d in headers:
+            if d['name'] == 'Subject':
+                subject = d['value']
+            if d['name'] == 'From':
+                sender = d['value']
+        return subject,sender
+    except:
+        return None,None 
+
+def Process(Subject,rawMsg):
+    if Subject.lower() == "registry":
+        res = reg().registry(rawMSG=rawMsg)
+    elif Subject.lower() == "shutdown_logout":
+        res = sl.shutdown_logout(rawMsg)
+    else:
+        return ["0","invalid Subject"]
+    return res  
+
+def getContent(res):
+    if res[0] =="0" and res[1] =="0":
+        return "Invalid operation"
+    elif res[0] =="0" and res[1] != "0":
+        return res[1]
+    elif res[0] =="1" and res[1] =="1":
+        return "success"
+    elif res[0] =="1" and res[1] !="1":
+        return res[1]  
+
 def getListEmail():
     global creds
     service = build('gmail', 'v1', credentials=creds)
@@ -77,18 +112,22 @@ def getListEmail():
             rawMsg = base64.b64decode(base64PlainMsg).decode('utf-8')
             if rawMsg:
                 # read the message
+                print("rrrr", rawMsg)
+                Subject, sender = getSubject_Sender(payload['headers'])
+                res = Process(Subject, rawMsg)
+                content = getContent(res)
                 modifyMessage = {
                     "removeLabelIds": ["UNREAD"],
                 }
                 service.users().messages().modify(userId= "me",id= newestMsg['id'],body=modifyMessage).execute()
-                replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],'this is content')
-                replyMsg_attachments = createMessageWithAttachments(newestMsg['id'],newestMsg['threadId'],payload['headers'],'this is content')
+                replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
+                # replyMsg_attachments = createMessageWithAttachments(newestMsg['id'],newestMsg['threadId'],payload['headers'],'this is content')
 
-                # sent = gmail_send_message(replyMsg)
-                sent_attachments =gmail_send_message(replyMsg_attachments)
-                print('sent',sent_attachments)
+                sent = gmail_send_message(replyMsg)
+                # sent_attachments = gmail_send_message(replyMsg_attachments)
+                print('sent',sent)
                 #TODO: Lấy rawMsg, threadID để thực hiện các bước khác nha
-                
+    
 def createMessage(messagesId,threadId,headers,content):
     try:
         for header in headers:
@@ -166,7 +205,6 @@ def gmail_send_message(create_message):
         print(F'An error occurred: {error}')
         send_message = None
     return send_message
-
 
 def main(): 
     authorize()
