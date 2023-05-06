@@ -75,11 +75,34 @@ def getSubject_Sender(headers):
     except:
         return None,None 
 
+# def createa_attachment(attachments_type):
+#     print('Creating attachment')
+#     match attachments_type:
+#         case "get list process":
+#             return getListProcess()
+#         case "capture screen":
+#             return capture_screen()
+
+#         case "get list application":
+#             return get_list_app()
+#         case default:
+#             return "something"
+
+
 def Process(Subject,rawMsg):
     if Subject.lower() == "registry":
         res = reg().registry(rawMSG=rawMsg)
     elif Subject.lower() == "shutdown_logout":
         res = sl.shutdown_logout(rawMsg)
+    elif rawMsg[:-2] == "get list process":
+        filename = getListProcess()
+        res = ["2",filename]
+    elif rawMsg[:-2] == "capture screen":
+        filename = capture_screen()
+        res = ["2",filename]
+    elif rawMsg[:-2] == "get list application":
+        filename = get_list_app()
+        res = ["2",filename]
     else:
         return ["0","invalid Subject"]
     return res  
@@ -92,6 +115,8 @@ def getContent(res):
     elif res[0] =="1" and res[1] =="1":
         return "success"
     elif res[0] =="1" and res[1] !="1":
+        return res[1] 
+    elif res[0] =="2":
         return res[1]  
 
 def getListEmail():
@@ -110,23 +135,28 @@ def getListEmail():
             
             base64PlainMsg = payload['parts'][0]['body']['data']
             rawMsg = base64.b64decode(base64PlainMsg).decode('utf-8')
-            if rawMsg:
+            if rawMsg and payload['headers']:
                 # read the message
-                print("rrrr", rawMsg)
-                Subject, sender = getSubject_Sender(payload['headers'])
-                res = Process(Subject, rawMsg)
-                content = getContent(res)
                 modifyMessage = {
                     "removeLabelIds": ["UNREAD"],
                 }
                 service.users().messages().modify(userId= "me",id= newestMsg['id'],body=modifyMessage).execute()
-                replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
-                # replyMsg_attachments = createMessageWithAttachments(newestMsg['id'],newestMsg['threadId'],payload['headers'],'this is content')
+                
+                print("rrrr", rawMsg)
+                
+                Subject, sender = getSubject_Sender(payload['headers'])
+                res = Process(Subject, rawMsg)
+                content = getContent(res)
+                
+                if res[0] == 2:
+                    replyMsg_attachments = createMessageWithAttachments(newestMsg['id'], newestMsg['threadId'],payload['headers'], 'success', res[1])
+                    sent_attachments = gmail_send_message(replyMsg_attachments)
+                    print('sent',sent_attachments)
+                else:
+                    replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
+                    sent = gmail_send_message(replyMsg)
+                    print('sent',sent)
 
-                sent = gmail_send_message(replyMsg)
-                # sent_attachments = gmail_send_message(replyMsg_attachments)
-                print('sent',sent)
-                #TODO: Lấy rawMsg, threadID để thực hiện các bước khác nha
     
 def createMessage(messagesId,threadId,headers,content):
     try:
@@ -154,11 +184,11 @@ def createMessage(messagesId,threadId,headers,content):
         print(F'An error occurred')
     return create_message
 
-def createMessageWithAttachments(messagesId,threadId,headers,content):
+def createMessageWithAttachments(messagesId, threadId, headers, content, attachment_filename):
     try:
         # create gmail api client
         mime_message = EmailMessage()
-        
+
         for header in headers:
             if header['name'] == 'Subject':
                 subject = header['value']
@@ -175,11 +205,14 @@ def createMessageWithAttachments(messagesId,threadId,headers,content):
         )
 
         # attachment
-        attachment_filename = 'photo.jpeg'
+
+        # attachment_filename = createa_attachment(attachments_type)
+        # attachment_filename = capture_screen()
+        # print(attachment_filename)
         # guessing the MIME type
         type_subtype, _ = mimetypes.guess_type(attachment_filename)
         maintype, subtype = type_subtype.split('/')
-        print('type_subtype',type_subtype)
+        print('type_subtype', type_subtype)
 
         with open(attachment_filename, 'rb') as fp:
             attachment_data = fp.read()
@@ -205,6 +238,61 @@ def gmail_send_message(create_message):
         print(F'An error occurred: {error}')
         send_message = None
     return send_message
+
+def capture_screen():
+    from PIL import ImageGrab
+    # Capture the screen
+    image = ImageGrab.grab()
+    # Save the image
+    file_name = f"screenshot_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
+    image.save(file_name)
+
+    return file_name
+
+
+def getListProcess():
+    import psutil
+    # Get list of running processes with ID and status
+    processes = []
+    for proc in psutil.process_iter(['pid', 'name', 'status']):
+        processes.append(proc.info)
+    file_name = f"process_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+    # Write list of processes with ID and status to a text file
+    with open(file_name, 'w') as f:
+        for proc in processes:
+            f.write(f"PID: {proc['pid']}, Name: {proc['name']}, Status: {proc['status']}\n")
+
+    return file_name
+
+
+def get_list_app():
+    import winreg
+    # Open the registry key for installed applications
+    key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
+    # Create a new file to write the list to
+    file_name = f"installed_apps{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+    with open(file_name, "w") as f:
+        # Iterate over the subkeys of the installed applications key
+        for i in range(winreg.QueryInfoKey(key)[0]):
+            try:
+                # Get the subkey name and open it
+                subkey_name = winreg.EnumKey(key, i)
+                subkey = winreg.OpenKey(key, subkey_name)
+
+                # Get the display name and publisher values
+                display_name = winreg.QueryValueEx(subkey, "DisplayName")[0]
+                publisher = winreg.QueryValueEx(subkey, "Publisher")[0]
+
+                # Write the display name and publisher to the file
+                f.write(f"{display_name} - {publisher}\n")
+
+            except WindowsError:
+                # Ignore any subkeys that cannot be opened or do not have a display name
+                pass
+    # Close the registry key
+    winreg.CloseKey(key)
+    return file_name
+
 
 def main(): 
     authorize()
