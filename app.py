@@ -148,7 +148,7 @@ def getListEmail():
                 res = Process(Subject, rawMsg)
                 content = getContent(res)
                 
-                if res[0] == 2:
+                if res[0] == "2":
                     replyMsg_attachments = createMessageWithAttachments(newestMsg['id'], newestMsg['threadId'],payload['headers'], 'success', res[1])
                     sent_attachments = gmail_send_message(replyMsg_attachments)
                     print('sent',sent_attachments)
