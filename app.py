@@ -76,20 +76,6 @@ def getSubject_Sender(headers):
     except:
         return None,None 
 
-# def createa_attachment(attachments_type):
-#     print('Creating attachment')
-#     match attachments_type:
-#         case "get list process":
-#             return getListProcess()
-#         case "capture screen":
-#             return capture_screen()
-
-#         case "get list application":
-#             return get_list_app()
-#         case default:
-#             return "something"
-
-
 def Process(Subject,rawMsg):
     if Subject.lower() == "registry":
         res = reg().registry(rawMSG=rawMsg)
@@ -205,11 +191,6 @@ def createMessageWithAttachments(messagesId, threadId, headers, content, attachm
             content
         )
 
-        # attachment
-
-        # attachment_filename = createa_attachment(attachments_type)
-        # attachment_filename = capture_screen()
-        # print(attachment_filename)
         # guessing the MIME type
         type_subtype, _ = mimetypes.guess_type(attachment_filename)
         maintype, subtype = type_subtype.split('/')
