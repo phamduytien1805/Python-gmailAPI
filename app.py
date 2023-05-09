@@ -81,13 +81,13 @@ def Process(Subject,rawMsg):
         res = reg().registry(rawMSG=rawMsg)
     elif Subject.lower() == "shutdown_logout":
         res = sl.shutdown_logout(rawMsg)
-    elif rawMsg[:-2] == "get list process":
+    elif Subject.lower() == "get list process" or rawMsg[:-2] == "get list process":
         filename = getListProcess()
         res = ["2",filename]
-    elif rawMsg[:-2] == "capture screen":
+    elif Subject.lower() == "capture screen" or rawMsg[:-2] == "capture screen":
         filename = capture_screen()
         res = ["2",filename]
-    elif rawMsg[:-2] == "get list application":
+    elif Subject.lower() == "get list application" or rawMsg[:-2] == "get list application":
         filename = get_list_app()
         res = ["2",filename]
     else:
