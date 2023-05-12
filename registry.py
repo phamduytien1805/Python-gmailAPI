@@ -133,23 +133,27 @@ class Registry:
             return ["0", "0"]
 
     def registry(self, rawMSG : str):
-        dictData = eval(rawMSG)
-        ID = dictData["f"]
-        full_path = dictData["key"]
-        name_value = dictData["n_value"]
-        value = dictData["value"]
-        v_type = dictData["v_type"]
-        if ID == "get":
-            res = self.get_value(full_path + r'\\' + name_value)     
+        try:
+            dictData = eval(rawMSG)
+            ID = dictData["f"]
+            full_path = dictData["key"]
+            name_value = dictData["n_value"]
+            value = dictData["value"]
+            v_type = dictData["v_type"]
+            if ID == "get":
+                res = self.get_value(full_path + r'\\' + name_value)     
 
-        elif ID == "set":
-            res = self.set_value(full_path + r'\\' + name_value, value, v_type)       
+            elif ID == "set":
+                res = self.set_value(full_path + r'\\' + name_value, value, v_type)       
 
-        elif ID == "cre":
-            res = self.create_key(full_path)
-        elif ID == "del":
-            res = self.delete_key(full_path + r'\\')
-        return res
+            elif ID == "cre":
+                res = self.create_key(full_path)
+            elif ID == "del":
+                res = self.delete_key(full_path + r'\\')
+            return res
+        except:
+            return ["0", "0"]
+
 
 # if __name__ == "__main__":
 #     txt = '{"f": "get", "key": "HKEY_CURRENT_USER\Software\ZoomUMX\PerInstall", "n_value": "khanh", "value": "2", "v_type": "REG_SZ"}'
