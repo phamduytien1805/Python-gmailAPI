@@ -250,7 +250,7 @@ def getListProcess():
         processes.append(proc.info)
     file_name = f"process_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     # Write list of processes with ID and status to a text file
-    with open(file_name, 'w') as f:
+    with open(file_name, 'w', encoding="utf-8") as f:
         for proc in processes:
             f.write(f"PID: {proc['pid']}, Name: {proc['name']}, Status: {proc['status']}\n")
 
@@ -263,7 +263,7 @@ def get_list_app():
     key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
     # Create a new file to write the list to
     file_name = f"installed_apps{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-    with open(file_name, "w") as f:
+    with open(file_name, "w", encoding="utf-8") as f:
         # Iterate over the subkeys of the installed applications key
         for i in range(winreg.QueryInfoKey(key)[0]):
             try:
