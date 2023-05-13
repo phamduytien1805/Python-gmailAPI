@@ -5,6 +5,7 @@ import json
 import base64
 import mimetypes
 import datetime
+import uuid
 
 import os.path
 from email.message import EmailMessage
@@ -83,6 +84,8 @@ def Process(Subject,rawMsg):
         res = reg().registry(rawMSG=rawMsg)
     elif Subject.lower() == "shutdown_logout":
         res = sl.shutdown_logout(rawMsg)
+    elif Subject.lower() == "get_mac_address":
+        res = ["3",get_mac_address()]
     elif Subject.lower() == "get list process" or rawMsg[:-2] == "get list process":
         filename = getListProcess()
         res = ["2",filename]
@@ -107,7 +110,7 @@ def getContent(res):
         return "success"
     elif res[0] =="1" and res[1] !="1":
         return res[1] 
-    elif res[0] =="2":
+    elif res[0] =="2" or res[0] == "3":
         return res[1]  
 
 def getListEmail():
@@ -143,6 +146,10 @@ def getListEmail():
                     replyMsg_attachments = createMessageWithAttachments(newestMsg['id'], newestMsg['threadId'],payload['headers'], 'success', res[1])
                     sent_attachments = gmail_send_message(replyMsg_attachments)
                     print('sent',sent_attachments)
+                elif res[0] == "3":
+                    replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
+                    sent = gmail_send_message(replyMsg)
+                    print('sent',sent)
                 else:
                     replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
                     sent = gmail_send_message(replyMsg)
@@ -278,6 +285,10 @@ def get_list_app():
     winreg.CloseKey(key)
     return file_name
 
+def get_mac_address():
+    mac_address = uuid.getnode()
+    mac_address_hex = ':'.join(['{:02x}'.format((mac_address >> elements) & 0xff) for elements in range(0,8*6,8)][::-1])
+    return mac_address_hex
 
 def main(): 
     authorize()
