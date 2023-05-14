@@ -1,0 +1,40 @@
+AI/
+    final_AI.pptx
+    Nhandienchuviet.py
+    text.py
+    bt/
+        19127323.pdf
+        19127323_project1.py
+        a.png
+        BTchoico.py
+        ex-ai-en-2-19127323.docx
+        ex-ai-en-2-19127323.pdf
+        ex-ai-en-2.pdf
+        ex-ai-en-3-19127323.png
+        ex-ai-en-3.pdf
+        ex-ai-en-4-19127323.docx
+        ex-ai-en-4.pdf
+        ex-ai-en-5-19127323.pdf
+        ex-ai-en-5.pdf
+        ex-ai-en-6.pdf
+        W3_19127272.pdf
+        W4_19127272.pdf
+    document/
+        Artificial Intelligence - A Modern Approach (3rd Edition).pdf
+        DeepLearningBook.pdf
+        drive-download-20210812T015857Z-001.zip
+        ex-ai-en-1-done.png
+        python.pdf
+    lab3/
+        19127323.zip
+        JupyterNotebook.pdf
+        Lab03-DecisionTree&BayesTheorem.ipynb
+        19127323/
+            19127323.ipynb
+    Project 2/
+        Giao-trinh_Prolog.pdf
+        Huong_dan_SWIProlog_04_05_06.pdf
+        Huong_dan_SWI_Prolog_01.pdf
+        Logic.pdf
+        test.pl
+        test.pl~

