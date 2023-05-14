@@ -270,7 +270,7 @@ def getListProcess():
         processes.append(proc.info)
     file_name = f"process_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     # Write list of processes with ID and status to a text file
-    with open(file_name, 'w') as f:
+    with open(file_name, 'w', encoding='utf-8') as f:
         for proc in processes:
             f.write(f"PID: {proc['pid']}, Name: {proc['name']}, Status: {proc['status']}\n")
 
@@ -339,18 +339,6 @@ def sendListDirs(directory_path):
 
     return file_name
 
-    
-
-# def extract_path(string):
-#     # pattern = r"\b(?:[a-zA-Z]:|\\)(?:\\[^\\/:*?\"<>|\r\n]+)+\\?"
-
-#     # match = re.search(pattern, string)
-#     # if match:
-#     #     path = match.group()
-#     #     return path
-#     # else:
-#     #     return None
-
 def delFile(msg):
     if os.path.isabs(msg.rstrip('\r\n').replace("\\","\\")):
         os.remove(msg.rstrip('\r\n').replace("\\","\\"))
@@ -377,4 +365,4 @@ def receiveGmailNotification():
     
 if __name__ == '__main__':
     main()
-   
+    app.run(debug=True, host='localhost', port=3333)
