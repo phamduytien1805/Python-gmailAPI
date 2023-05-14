@@ -1,0 +1,56 @@
+Docker Desktop - Docker Inc.
+Git - The Git Development Community
+Mozilla Firefox (x64 en-US) - Mozilla
+Mozilla Maintenance Service - Mozilla
+Microsoft 365 Apps for enterprise - en-us - Microsoft Corporation
+Ứng dụng Microsoft 365 dành cho doanh nghiệp lớn - vi-vn - Microsoft Corporation
+Microsoft OneDrive - Microsoft Corporation
+Synaptics Pointing Device Driver - Synaptics Incorporated
+WinRAR 6.21 (64-bit) - win.rar GmbH
+Microsoft Visual C++ 2022 X64 Minimum Runtime - 14.34.31938 - Microsoft Corporation
+Windows SDK DirectX x64 Remote - Microsoft Corporation
+SharpKeys - RandyRants.com
+Python 3.11.0 pip Bootstrap (64-bit) - Python Software Foundation
+Python 3.11.0 Core Interpreter (64-bit) - Python Software Foundation
+Application Verifier x64 External Package - Microsoft
+Python 3.8.2 Standard Library (64-bit) - Python Software Foundation
+Windows Subsystem for Linux Update - Microsoft Corporation
+vs_devenx64vmsi - Microsoft Corporation
+Microsoft Update Health Tools - Microsoft Corporation
+vs_Graphics_Singletonx64 - Microsoft Corporation
+Microsoft Visual C++ 2008 Redistributable - x64 9.0.30729.4148 - Microsoft Corporation
+Python 3.8.2 Utility Scripts (64-bit) - Python Software Foundation
+Microsoft System CLR Types for SQL Server 2019 - Microsoft Corporation
+Oracle VM VirtualBox 7.0.6 - Oracle and/or its affiliates
+Python 3.8.2 Documentation (64-bit) - Python Software Foundation
+Windows App Certification Kit Native Components - Microsoft Corporation
+Microsoft Visual Studio Installer - Microsoft Corporation
+Python 3.11.0 Tcl/Tk Support (64-bit) - Python Software Foundation
+Python 3.11.0 Development Libraries (64-bit) - Python Software Foundation
+VS JIT Debugger - Microsoft Corporation
+Microsoft Visual C++ 2022 X64 Additional Runtime - 14.34.31938 - Microsoft Corporation
+Universal CRT Tools x64 - Microsoft Corporation
+Python 3.8.2 Add to Path (64-bit) - Python Software Foundation
+Application Verifier x64 External Package - Microsoft
+Python 3.8.2 pip Bootstrap (64-bit) - Python Software Foundation
+Office 16 Click-to-Run Licensing Component - Microsoft Corporation
+Office 16 Click-to-Run Extensibility Component - Microsoft Corporation
+Microsoft Visual C++ 2022 X64 Debug Runtime - 14.34.31938 - Microsoft Corporation
+Python 3.8.2 Executables (64-bit) - Python Software Foundation
+Python 3.11.0 Add to Path (64-bit) - Python Software Foundation
+Python 3.8.2 Core Interpreter (64-bit) - Python Software Foundation
+Python 3.11.0 Executables (64-bit) - Python Software Foundation
+Python 3.11.0 Utility Scripts (64-bit) - Python Software Foundation
+Python 3.8.2 Development Libraries (64-bit) - Python Software Foundation
+VS Script Debugging Common - Microsoft Corporation
+Node.js - Node.js Foundation
+vs_communityx64msi - Microsoft Corporation
+Python 3.11.0 Standard Library (64-bit) - Python Software Foundation
+Python 3.11.0 Documentation (64-bit) - Python Software Foundation
+Python 3.11.0 Test Suite (64-bit) - Python Software Foundation
+vs_minshellinteropx64msi - Microsoft Corporation
+icecap_collection_x64 - Microsoft Corporation
+vs_minshellx64msi - Microsoft Corporation
+Python 3.8.2 Test Suite (64-bit) - Python Software Foundation
+Python 3.8.2 Tcl/Tk Support (64-bit) - Python Software Foundation
+DiagnosticsHub_CollectionService - Microsoft Corporation

@@ -1,0 +1,5 @@
+Docker Desktop - Docker Inc.
+Git - The Git Development Community
+Mozilla Firefox (x64 en-US) - Mozilla
+Mozilla Maintenance Service - Mozilla
+Microsoft 365 Apps for enterprise - en-us - Microsoft Corporation
